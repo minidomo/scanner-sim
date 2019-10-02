@@ -1,22 +1,116 @@
-.App {
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+.app {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
+.input-area {
+  display: block;
+  margin: 0 auto;
+  width: 40%;
 }
 
-.App-header {
+body {
   background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #09d3ac;
+button {
+  display: block;
+  margin: 0 auto;
+  padding: 5px;
+  width: 10%;
+  min-width: 82px;
+  font-family: 'Open Sans', sans-serif;
+  background-color: #7A9E9F;
+  color: #c9e6e6;
+  border: 1px solid #4F6367;
+}
+
+button:hover {
+  background-color: #657f80;
+  cursor: pointer;
+}
+
+/* https://stackoverflow.com/questions/24402300/how-to-make-equal-space-between-boxes-in-one-row-via-css/24404011#24404011 */
+
+.row {
+  text-align: justify;
+  /* border: 2px solid green; */
+  width: 80%;
+  /* it changes by screen size actually */
+  height: 90px;
+  padding: 5px;
+  /* custom edits */
+  margin: 0 auto;
+}
+
+.row:after {
+  content: '';
+  display: inline-block;
+  width: 100%;
+}
+
+.col {
+  display: inline-block;
+  margin: 0;
+}
+
+.cell {
+  border: 1px solid #DDD;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  /* https://stackoverflow.com/questions/5703552/css-center-text-horizontally-and-vertically-inside-a-div-block */
+  text-align: center;
+  vertical-align: middle;
+  line-height: 80px;
+  /* custom edits */
+  cursor: default;
+  color: #FDC5F5;
+  font-family: 'Consolas';
+  font-size: 300%;
+  white-space: pre;
+  /* required to preserve leading and trailing whitespace */
+}
+
+.results {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 200%;
+}
+
+.result {
+  color: #DE6C83;
+  white-space: pre;
+  /* required to preserve leading and trailing whitespace */
+}
+
+.result-title {
+  color: #DDD;
+}
+
+.color-key {
+  padding: 0;
+  margin: 0 auto;
+  width: 70%;
+  max-width: 800px;
+  list-style: none;
+  font-size: 150%;
+  color: #DDD;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.color-empty {
+  background-color: #4D5061;
+}
+
+.color-read {
+  background-color: #8093F1;
+}
+
+.color-unread {
+  background-color: #677DB7;
+}
+
+.color-skipped {
+  background-color: #F7AEF8;
+  color: #4D5061;
 }
