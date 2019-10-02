@@ -1,3 +1,8 @@
+# Scanner Simulator
+This was created to help people in my coding club understand how the `Scanner` methods, `next` and `nextLine`, in Java work.
+
+See it [here](https://scannersim.herokuapp.com/).
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
