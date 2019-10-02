@@ -1,5 +1,5 @@
 const character = {
-    isWhitespace(value) {
+    isWhiteSpace(value) {
         return value === ' ' || value === '\n';
     },
     isLineTerminator(value) {
