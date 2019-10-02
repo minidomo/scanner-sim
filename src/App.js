@@ -2,58 +2,18 @@ import React from 'react';
 import { Helmet } from 'react-helmet';
 import './App.css';
 
+import Cell from './structs/Cell';
+import CellObject from './structs/CellObject';
+import Time from './util/Time';
+import Character from './util/Character';
+
 const LENGTH = () => {
   return Math.floor(9 / 958 * window.innerWidth);
 };
 
-const EMPTY = ' ';
 const EMPTY_STRING = '(empty string)';
 const NO_SUCH_ELEMENT_EXCEPTION = 'NoSuchElementException';
 const NO_INPUT = 'Enter input first';
-
-const isWhiteSpace = (char) => {
-  return char === ' ' || char === '\n';
-};
-
-const isNewLine = (char) => {
-  return char === '\n';
-};
-
-const pause = async (ms) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-class CellObj {
-  constructor(obj = {}) {
-    this.read = obj.read || false;
-    this.skipped = obj.skipped || false;
-    if (obj.value && !obj.empty) {
-      this.value = obj.value;
-      this.empty = false;
-    } else {
-      this.value = EMPTY;
-      this.empty = true;
-    }
-  }
-
-  getColors() {
-    const obj = {};
-    if (this.skipped) {
-      obj.backgroundColor = '#F7AEF8';
-    } else if (this.read) {
-      obj.backgroundColor = '#8093F1';
-    } else if (this.empty) {
-      obj.backgroundColor = '#4D5061';
-    } else {
-      obj.backgroundColor = '#677DB7';
-    }
-    return obj;
-  }
-
-  toString() {
-    return 'CellObj { ' + this.value + ', ' + this.empty + ', ' + this.read + ' }';
-  }
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -67,10 +27,7 @@ class App extends React.Component {
       result: '',
       currentTextArea: '',
       inProgess: false,
-      displayRow: Array(LENGTH()).fill(new CellObj()),
-      toString() {
-        return JSON.stringify(this, null, 4);
-      }
+      displayRow: Array(LENGTH()).fill(new CellObject())
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -99,7 +56,7 @@ class App extends React.Component {
       const { value } = this.state.input;
       const cells = this.state.displayRow.slice();
       for (let x = 0; x < cells.length; x++) {
-        cells[x] = new CellObj({ value: value[x] });
+        cells[x] = new CellObject({ value: value[x] });
       }
       this.setState({
         displayRow: cells
@@ -116,7 +73,7 @@ class App extends React.Component {
         obj.value = value[x];
       else
         obj.empty = true;
-      cells[x - pointer] = new CellObj(obj);
+      cells[x - pointer] = new CellObject(obj);
     }
     this.setState({
       displayRow: cells
@@ -158,7 +115,7 @@ class App extends React.Component {
 
     const cells = this.state.displayRow.slice();
     const index = pointer % cells.length;
-    const current = new CellObj(cells[index]);
+    const current = new CellObject(cells[index]);
 
     if (current.read || current.skipped) {
       this.updateDisplay(this.doNext, event, previous, start);
@@ -166,14 +123,14 @@ class App extends React.Component {
     }
 
     if (!previous) { // first call to next
-      if (isWhiteSpace(current.value)) {
+      if (Character.isWhiteSpace(current.value)) {
         current.skipped = true;
       } else {
         current.read = true;
       }
     } else {
-      if (isWhiteSpace(current.value)) {
-        if (isWhiteSpace(previous)) {
+      if (Character.isWhiteSpace(current.value)) {
+        if (Character.isWhiteSpace(previous)) {
           current.skipped = true;
         } else {
           this.setState({
@@ -196,7 +153,7 @@ class App extends React.Component {
       displayRow: cells,
       result: current.read ? result + current.value : result
     }, async () => {
-      await pause(200);
+      await Time.pause(200);
       this.doNext(event, current.value);
     });
   }
@@ -238,20 +195,20 @@ class App extends React.Component {
 
     const cells = this.state.displayRow.slice();
     const index = pointer % cells.length;
-    const current = new CellObj(cells[index]);
+    const current = new CellObject(cells[index]);
 
     if (current.read || current.skipped) {
       this.updateDisplay(this.doNextLine, event, previous, start);
       return;
     }
 
-    if (isNewLine(previous)) {
+    if (Character.isLineTerminator(previous)) {
       this.setState({
         inProgess: false,
         result: result || EMPTY_STRING
       });
       return;
-    } else if (isNewLine(current.value)) {
+    } else if (Character.isLineTerminator(current.value)) {
       current.skipped = true;
     } else {
       current.read = true;
@@ -266,7 +223,7 @@ class App extends React.Component {
       displayRow: cells,
       result: current.read ? result + current.value : result
     }, async () => {
-      await pause(200);
+      await Time.pause(200);
       this.doNextLine(event, current.value);
     });
   }
@@ -277,17 +234,13 @@ class App extends React.Component {
     const newCells = [];
     if (LENGTH() < cells.length) {
       for (let x = 0; x < LENGTH(); x++)
-        newCells.push(new CellObj(cells[x]));
+        newCells.push(new CellObject(cells[x]));
     } else {
-      // alert(`${pointer} ${cells.length} ${pointer % cells.length}`);
-      // let min;
-      // if (pointer > cells.length)
-      //   min = cells.length;
-
+      // TODO fix bug?
       for (let x = 0; x < pointer % cells.length; x++)
-        newCells.push(new CellObj(cells[x]));
+        newCells.push(new CellObject(cells[x]));
       for (let x = pointer; newCells.length < LENGTH(); x++)
-        newCells.push(new CellObj({ value: value[x] }));
+        newCells.push(new CellObject({ value: value[x] }));
     }
     this.setState({
       displayRow: newCells
@@ -336,23 +289,6 @@ class App extends React.Component {
         <br />
         <div className="info">
           Made by <a href="https://github.com/minidomo">J.B. Ladera</a> with ♥
-        </div>
-      </div>
-    );
-  }
-
-  toString() {
-    const ret = JSON.stringify(this.state, null, 4);
-    return ret;
-  }
-}
-
-class Cell extends React.Component {
-  render() {
-    return (
-      <div className="col">
-        <div className="cell" style={{ backgroundColor: this.props.backgroundColor }}>
-          {this.props.value}
         </div>
       </div>
     );
