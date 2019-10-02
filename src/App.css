@@ -100,19 +100,23 @@ button:hover {
 
 .color-empty {
   background-color: #4D5061;
+  padding: 5px;
 }
 
 .color-read {
   background-color: #8093F1;
+  padding: 5px;
 }
 
 .color-unread {
   background-color: #677DB7;
+  padding: 5px;
 }
 
 .color-skipped {
   background-color: #F7AEF8;
   color: #4D5061;
+  padding: 5px;
 }
 
 .info {
