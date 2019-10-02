@@ -1,5 +1,5 @@
 {
-  "name": "sample",
+  "name": "scanner-sim",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -28,5 +28,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This was created to help people in my coding club understand how the `Scanner` methods, `next` and `nextLine`, in Java work.",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minidomo/scanner-sim.git"
+  },
+  "author": "JB Ladera (https://github.com/minidomo)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/minidomo/scanner-sim/issues"
+  },
+  "homepage": "https://github.com/minidomo/scanner-sim#readme"
 }
