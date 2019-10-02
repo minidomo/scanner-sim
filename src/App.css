@@ -114,3 +114,13 @@ button:hover {
   background-color: #F7AEF8;
   color: #4D5061;
 }
+
+.info {
+  font-size: 130%;
+  font-family: 'Open Sans', sans-serif;
+  color: #7FBEEB;
+}
+
+a {
+  color: inherit;
+}

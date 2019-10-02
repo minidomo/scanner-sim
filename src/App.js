@@ -333,6 +333,10 @@ class App extends React.Component {
           <li className="color-unread">This color means the cell has not been read</li>
           <li className="color-skipped">This color means the cell was skipped</li>
         </ul>
+        <br />
+        <div className="info">
+          Made by <a href="https://github.com/minidomo">J.B. Ladera</a> with ♥
+        </div>
       </div>
     );
   }
