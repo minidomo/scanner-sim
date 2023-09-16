@@ -1,298 +1,86 @@
-import React from 'react';
-import { Helmet } from 'react-helmet';
+import { useEffect, useState } from 'react';
 import './App.css';
-
 import Cell from './structs/Cell';
-import CellObject from './structs/CellObject';
-import Time from './util/Time';
-import Character from './util/Character';
 
-const LENGTH = () => {
-  return Math.floor(9 / 958 * window.innerWidth);
-};
+function App() {
+  const [input, setInput] = useState('');
+  const [inputPointer, setInputPointer] = useState(0);
+  const [displayPointer, setDisplayPointer] = useState(0);
+  const [cells, setCells] = useState(createCells());
 
-const EMPTY_STRING = '(empty string)';
-const NO_SUCH_ELEMENT_EXCEPTION = 'NoSuchElementException';
-const NO_INPUT = 'Enter input first';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      input: {
-        value: '',
-        pointer: 0
-      },
-      result: '',
-      currentTextArea: '',
-      inProgess: false,
-      displayRow: Array(LENGTH()).fill(new CellObject())
-    };
+  useEffect(() => {
+    setInputPointer(0);
+    setDisplayPointer(0);
+    setCells(createCells());
+  }, [input]);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSendInput = this.handleSendInput.bind(this);
-    this.updateDisplay = this.updateDisplay.bind(this);
-    this.doNext = this.doNext.bind(this);
-    this.doNextLine = this.doNextLine.bind(this);
-    this.resize = this.resize.bind(this);
-    this.renderRow = this.renderRow.bind(this);
+  function createCells() {
+    const maxVisible = 10;
+    const ret = [];
 
-    window.addEventListener('resize', this.resize);
-  }
-
-  handleChange(event) {
-    this.setState({ currentTextArea: event.target.value });
-  }
-
-  handleSendInput(event) {
-    const value = this.state.currentTextArea;
-    this.setState({
-      input: {
-        value: value,
-        pointer: 0
-      }
-    }, () => {
-      const { value } = this.state.input;
-      const cells = this.state.displayRow.slice();
-      for (let x = 0; x < cells.length; x++) {
-        cells[x] = new CellObject({ value: value[x] });
-      }
-      this.setState({
-        displayRow: cells
-      });
-    });
-  }
-
-  updateDisplay(cb, event, previous, start) {
-    const { pointer, value } = this.state.input;
-    const cells = this.state.displayRow.slice();
-    for (let x = pointer; x < pointer + cells.length; x++) {
-      const obj = {};
-      if (value[x])
-        obj.value = value[x];
-      else
-        obj.empty = true;
-      cells[x - pointer] = new CellObject(obj);
-    }
-    this.setState({
-      displayRow: cells
-    }, () => {
-      cb(event, previous, start);
-    });
-  }
-
-  doNext(event, previous, start) {
-    if (!this.state.input.value) {
-      this.setState({
-        result: NO_INPUT
-      });
-      return;
-    }
-    if (!previous && !start) {
-      if (this.state.inProgess) {
-        return;
+    for (let i = displayPointer; i < displayPointer + maxVisible; i++) {
+      if (i < input.length) {
+        ret.push(<Cell key={i} value={input[i]} />)
       } else {
-        this.setState({
-          inProgess: true,
-          result: ''
-        }, () => {
-          this.doNext(event, previous, true);
-        });
-        return;
+        ret.push(<Cell key={i} empty={true} />)
       }
     }
 
-    const { result } = this.state;
-    const { value, pointer } = this.state.input;
-    if (pointer >= value.length) {
-      this.setState({
-        inProgess: false,
-        result: result || NO_SUCH_ELEMENT_EXCEPTION
-      });
-      return;
-    }
-
-    const cells = this.state.displayRow.slice();
-    const index = pointer % cells.length;
-    const current = new CellObject(cells[index]);
-
-    if (current.read || current.skipped) {
-      this.updateDisplay(this.doNext, event, previous, start);
-      return;
-    }
-
-    if (!previous) { // first call to next
-      if (Character.isWhiteSpace(current.value)) {
-        current.skipped = true;
-      } else {
-        current.read = true;
-      }
-    } else {
-      if (Character.isWhiteSpace(current.value)) {
-        if (Character.isWhiteSpace(previous)) {
-          current.skipped = true;
-        } else {
-          this.setState({
-            inProgess: false,
-            result: result || NO_SUCH_ELEMENT_EXCEPTION
-          });
-          return;
-        }
-      } else {
-        current.read = true;
-      }
-    }
-    cells[index] = current;
-
-    this.setState({
-      input: {
-        value: value,
-        pointer: pointer + 1
-      },
-      displayRow: cells,
-      result: current.read ? result + current.value : result
-    }, async () => {
-      await Time.pause(200);
-      this.doNext(event, current.value);
-    });
+    return ret;
   }
 
-  doNextLine(event, previous, start) {
-    if (!this.state.input.value) {
-      this.setState({
-        result: NO_INPUT
-      });
-      return;
-    }
-    if (!previous && !start) {
-      if (this.state.inProgess) {
-        return;
-      } else {
-        this.setState({
-          inProgess: true,
-          result: ''
-        }, () => {
-          this.doNextLine(event, previous, true);
-        });
-        return;
-      }
-    }
-
-    const { result } = this.state;
-    const { value, pointer } = this.state.input;
-    if (pointer >= value.length) {
-      this.setState({
-        inProgess: false,
-        result: result || (pointer === value.length ? EMPTY_STRING : NO_SUCH_ELEMENT_EXCEPTION),
-        input: {
-          value: value,
-          pointer: pointer + 1
-        }
-      });
-      return;
-    }
-
-    const cells = this.state.displayRow.slice();
-    const index = pointer % cells.length;
-    const current = new CellObject(cells[index]);
-
-    if (current.read || current.skipped) {
-      this.updateDisplay(this.doNextLine, event, previous, start);
-      return;
-    }
-
-    if (Character.isLineTerminator(previous)) {
-      this.setState({
-        inProgess: false,
-        result: result || EMPTY_STRING
-      });
-      return;
-    } else if (Character.isLineTerminator(current.value)) {
-      current.skipped = true;
-    } else {
-      current.read = true;
-    }
-    cells[index] = current;
-
-    this.setState({
-      input: {
-        value: value,
-        pointer: pointer + 1
-      },
-      displayRow: cells,
-      result: current.read ? result + current.value : result
-    }, async () => {
-      await Time.pause(200);
-      this.doNextLine(event, current.value);
-    });
+  /**
+   * @param {React.MouseEvent<HTMLButtonElement,MouseEvent>} e 
+   */
+  function clickEnter(e) {
+    const textarea = e.currentTarget.ownerDocument.querySelector('textarea');
+    setInput(textarea.value);
   }
 
-  resize() {
-    const { value, pointer } = this.state.input;
-    const cells = this.state.displayRow.slice();
-    const newCells = [];
-    if (LENGTH() < cells.length) {
-      for (let x = 0; x < LENGTH(); x++)
-        newCells.push(new CellObject(cells[x]));
-    } else {
-      // TODO fix bug?
-      for (let x = 0; x < pointer % cells.length; x++)
-        newCells.push(new CellObject(cells[x]));
-      for (let x = pointer; newCells.length < LENGTH(); x++)
-        newCells.push(new CellObject({ value: value[x] }));
-    }
-    this.setState({
-      displayRow: newCells
-    });
+  /**
+   * @param {React.MouseEvent<HTMLButtonElement,MouseEvent>} e 
+   */
+  function clickNext(e) {
+
   }
 
-  renderRow() {
-    const row = this.state.displayRow.map(obj => {
-      const { value } = obj;
-      const shown = value === '\n' ? '\\n' : value;
-      const colors = obj.getColors();
-      return <Cell value={shown} backgroundColor={colors.backgroundColor} />;
-    });
-    return row;
+  /**
+   * @param {React.MouseEvent<HTMLButtonElement,MouseEvent>} e 
+   */
+  function clickNextLine(e) {
+
   }
 
-  render() {
-    const columnWidth = 82;
-    const width = `${LENGTH() * columnWidth}px`;
-    const row = this.renderRow();
-    return (
-      <div className="app">
-        <Helmet>
-          <title>{'Scanner Simulator'}</title>
-        </Helmet>
-        <textarea className="input-area" placeholder="Type here to test input" onChange={this.handleChange} value={this.state.currentTextArea}></textarea>
-        <button className="enter" onClick={this.handleSendInput}>Enter</button>
-        <br />
-        <div className="row" style={{ width: width }}>
-          {row}
-        </div>
-        <button className="next" onClick={this.doNext}>Next</button>
-        <button className="nextline" onClick={this.doNextLine}>NextLine</button>
-        <br />
-        <div className="results">
-          <span className="result-title">Result: </span>
-          <span className="result">{this.state.result}</span>
-        </div>
-        <br />
-        <ul className="color-key">
-          <li className="color-empty">This color means the cell is empty</li>
-          <li className="color-read">This color means the cell has been read</li>
-          <li className="color-unread">This color means the cell has not been read</li>
-          <li className="color-skipped">This color means the cell was skipped</li>
-        </ul>
-        <br />
-        <div className="info">
-          Made by <a href="https://github.com/minidomo">J.B. Ladera</a> with ♥
-        </div>
+  return (
+    <div className="App">
+      <textarea className="input-area" placeholder="Type here to test input"></textarea>
+      <button className="enter" onClick={clickEnter}>Enter</button>
+      <br />
+      <div className="row" style={{ width: 900 }}>
+        {cells}
       </div>
-    );
-  }
+      <button className="next" onClick={clickNext}>Next</button>
+      <button className="nextline" onClick={clickNextLine}>NextLine</button>
+      <br />
+      <div className="results">
+        <span className="result-title">Result: </span>
+        <span className="result">{ }</span>
+      </div>
+      <br />
+      <ul className="color-key">
+        <li className="color-empty">This color means the cell is empty</li>
+        <li className="color-read">This color means the cell has been read</li>
+        <li className="color-unread">This color means the cell has not been read</li>
+        <li className="color-skipped">This color means the cell was skipped</li>
+      </ul>
+      <br />
+      <div className="info">
+        Made by <a href="https://github.com/minidomo">JB Ladera</a> with ♥
+      </div>
+    </div>
+  );
 }
 
 export default App;

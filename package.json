@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "^16.10.1",
-    "react-dom": "^16.10.1",
-    "react-helmet": "^5.2.1",
-    "react-scripts": "3.1.2"
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -15,7 +18,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -28,18 +34,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "description": "This was created to help people in my coding club understand how the `Scanner` methods, `next` and `nextLine`, in Java work.",
-  "main": "index.js",
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/minidomo/scanner-sim.git"
-  },
-  "author": "JB Ladera (https://github.com/minidomo)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/minidomo/scanner-sim/issues"
-  },
-  "homepage": "https://github.com/minidomo/scanner-sim#readme"
+  }
 }
