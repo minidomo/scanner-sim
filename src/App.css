@@ -34,7 +34,7 @@ button:hover {
 /* https://stackoverflow.com/questions/24402300/how-to-make-equal-space-between-boxes-in-one-row-via-css/24404011#24404011 */
 
 .row {
-  text-align: justify;
+  /* text-align: justify; */
   /* border: 2px solid green; */
   width: 80%;
   /* it changes by screen size actually */
