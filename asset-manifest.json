@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/scanner-sim/static/css/main.3046d518.css",
+    "main.js": "/scanner-sim/static/js/main.69052a38.js",
+    "static/js/787.25a67ce4.chunk.js": "/scanner-sim/static/js/787.25a67ce4.chunk.js",
+    "index.html": "/scanner-sim/index.html",
+    "main.3046d518.css.map": "/scanner-sim/static/css/main.3046d518.css.map",
+    "main.69052a38.js.map": "/scanner-sim/static/js/main.69052a38.js.map",
+    "787.25a67ce4.chunk.js.map": "/scanner-sim/static/js/787.25a67ce4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3046d518.css",
+    "static/js/main.69052a38.js"
+  ]
+}
